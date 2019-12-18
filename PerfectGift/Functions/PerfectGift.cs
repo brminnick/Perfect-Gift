@@ -25,9 +25,13 @@ namespace PerfectGift
         [FunctionName(nameof(PerfectGiftFunction))]
         public async Task Run([BlobTrigger("gifts")]CloudBlockBlob giftPhotoBlob)
         {
+            _logger.LogInformation("Blob Storage Function Tiggered");
+
+            _logger.LogInformation("Creating Stream");
+
             using var giftPhotoStream = new MemoryStream();
             await giftPhotoBlob.DownloadToStreamAsync(giftPhotoStream);
-
+       
             var isPhotoValid = await _computerVisionService.IsPhotoValid(giftPhotoStream, _requiredPhotoTags).ConfigureAwait(false);
 
             if (isPhotoValid)

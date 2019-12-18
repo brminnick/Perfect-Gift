@@ -34,6 +34,8 @@ namespace PerfectGift
 
             ImageAnalysis? imageAnalysisResult;
 
+            _logger.LogInformation("Generating Image Analysis");
+
             try
             {
                 imageAnalysisResult = await _computerVisionApiClient.AnalyzeImageInStreamAsync(photo, new List<VisualFeatureTypes> { VisualFeatureTypes.Adult, VisualFeatureTypes.Description }).ConfigureAwait(false);
