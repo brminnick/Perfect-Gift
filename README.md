@@ -23,6 +23,8 @@ Using this [example of a perfectly wrapped gift](https://user-images.githubuserc
 
 ### Step 0: Install Tools
 
+In this step, we will install the necessary commandline tools in order to complete the solution.
+
 1. Install .NET Core v3.1
 - In a browser, navigate to the [Download .NET Core Website](https://dotnet.microsoft.com/download/dotnet-core/3.1?WT.mc_id=25daysofserverless-github-bramin)
 - On the **Download .NET Core Website**, install .NET Core 3.1
@@ -57,8 +59,10 @@ brew link --overwrite azure-functions-core-tools@3
 
 ### Step 1: Downloading the Solution Repo
 
+In this step, we will fork and clone the solution repo to our local machine.
+
 0. Star the [Solution Repo](https://github.com/brminnick/Perfect-Gift)
-> **Note** Starring the repo will help it become more discoverable, helping more folks achieve the solution
+> **Note** Starring the repo will help it become more discoverable, helping more devs achieve the solution
 - In a browser, navigate to the [Perfect Gift repo](https://github.com/brminnick/Perfect-Gift)
 - In the browser, tt the top of the page, click **Star**
 ![GitHub Star](https://user-images.githubusercontent.com/13558917/71127002-02e06b00-219f-11ea-9c10-347049d4fcf7.png)
@@ -75,3 +79,77 @@ brew link --overwrite azure-functions-core-tools@3
 git clone https://github.com/[your github user name]/Perfect-Gift
 ```
 > **Note** Replace `[your github user name]` with your [GitHub User name](https://stackoverflow.com/a/19077217/5953643)
+
+### Step 2: Log into Azure CLI
+
+1. In the terminal, enter the following command to login into Azure CLI:
+
+```bash
+az login
+```
+
+> **Note:** Stand by until the Azure CLI opens your browser to the Azure Login page
+
+### Step 3: Create Azure Resources
+
+In this step, we'll generate an API Key to use the [Computer Vision API](https://azure.microsoft.com/services/cognitive-services/computer-vision?WT.mc_id=25daysofserverless-github-cxa) in Azure.
+
+1. In the terminal, enter the following command to create an Azure Resource Group
+
+```bash
+az group create --name PerfectGift --location EastUS
+```
+
+2. In the terminal, enter the following command to create a free Computer Vision resource
+
+```bash
+az cognitiveservices account create --resource-group PerfectGift --name PerfectGiftComputerVision --sku F0 --kind ComputerVision --location EastUS
+```
+
+3. In the terminal, in the JSON response, note the value of **endpoint**
+> **Note:** For the EastUS, the endpoint should be `https://eastus.api.cognitive.microsoft.com`. We will use this value later in our serverless function.
+
+4. In the terminal, enter the following command to retrive the newly generated Computer Vision API Key
+
+```bash
+az cognitiveservices account keys list --resource-group PerfectGift --name PerfectGiftComputerVision
+```
+
+5. In the terminal, in the JSON repsonse, note the value of **key1**
+> **Note:** The JSON response will provide two keys. Both keys are valid, and we'll be using **key1** for our serverless function.
+> ```json
+> {
+>   "key1": "[YOUR API KEY]",
+>   "key2": "[YOUR API KEY]"
+> }
+> ```
+
+6. In the terminal, enter the following command to create an Azure Storage account:
+
+```bash
+az storage account create --name giftstorage[YOUR NAME] --location EastUS --resource-group PerfectGift --sku Standard_LRS
+```
+
+> **Note:** Replace `[Your Name]` with your name to ensure the storage account name is unique, e.g. `giftstoragebrandon`
+
+7. In the terminal, enter the following command to create an Azure Function App:
+
+```bash
+az functionapp create --resource-group PerfectGift --consumption-plan-location EastUS --name PerfectGift-[Your Name] --storage-account  giftstorage[YOUR NAME] --runtime dotnet
+```
+
+> **Note:** Replace `[Your Name]` with your name to ensure the function app name is unique, e.g. `PerfectGift-Brandon`
+
+8. In the terminal, enter the following to set the Azure Functions Runtime to v3:
+
+```bash
+az functionapp config appsettings set --resource-group PerfectGift --name PerfectGift-Brandon --settings "FUNCTIONS_EXTENSION_VERSION=~3"
+```
+
+9. In the terminal, enter the following to add the Computer Vision API **key** and **endpoint** to the newly created Azure Function App:
+
+```bash
+az functionapp config appsettings set --resource-group PerfectGift --name PerfectGift-[YOUR NAME] --settings "VisionApiKey=[YOUR API KEY]" "VisionApiBaseUrl=[YOUR COMPUTER VISION ENDPOINT]"
+```
+> **Note:** Replace `[YOUR NAME]` with your name, replace `[YOUR API KEY]` with the value of **key1** and replace `[YOUR COMPUTER VISION ENDPOINT]` with the value of **endpoint**
+> e.g. `az functionapp config appsettings set --resource-group PerfectGift --name PerfectGift-Brandon --settings "VisionApiKey=abc123" "VisionApiBaseUrl=https://eastus.api.cognitive.microsoft.com"`
