@@ -8,6 +8,8 @@ Each present must be wrapped according to the following rules
 2. Box is wrapped
 3. A bow / ribbon placed on top
 
+## Example
+
 Using this [example of a perfectly wrapped gift](https://user-images.githubusercontent.com/13558917/70572373-88876980-1b54-11ea-8cd5-af07306b6d19.jpg), the Computer Vision API confirms the following **Tags**:
 
 -   [x] Box
@@ -16,3 +18,5 @@ Using this [example of a perfectly wrapped gift](https://user-images.githubuserc
 -   [x] Present
 
 [![Computer Vision Results Example](https://user-images.githubusercontent.com/13558917/70573740-71964680-1b57-11ea-9126-e71f2de14a45.png)](https://azure.microsoft.com/services/cognitive-services/computer-vision?WT.mc_id=25daysofserverless-github-cxa)
+
+## Creating the Solution
