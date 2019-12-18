@@ -29,14 +29,11 @@ namespace PerfectGift
 
             _logger.LogInformation("Creating Stream");
 
-            using var giftPhotoStream = new MemoryStream();
-            await giftPhotoBlob.DownloadToStreamAsync(giftPhotoStream);
-       
-            var isPhotoValid = await _computerVisionService.IsPhotoValid(giftPhotoStream, _requiredPhotoTags).ConfigureAwait(false);
 
             if (isPhotoValid)
             {
                 _logger.LogInformation("Perfect Gift Confirmed");
+            using var giftPhotoStream = await giftPhotoBlob.OpenReadAsync().ConfigureAwait(false);
             }
             else
             {
