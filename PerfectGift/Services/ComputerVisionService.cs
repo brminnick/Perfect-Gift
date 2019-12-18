@@ -38,7 +38,7 @@ namespace PerfectGift
 
             try
             {
-                imageAnalysisResult = await _computerVisionApiClient.AnalyzeImageInStreamAsync(photo, new List<VisualFeatureTypes> { VisualFeatureTypes.Adult, VisualFeatureTypes.Description }).ConfigureAwait(false);
+                imageAnalysisResult = await _computerVisionApiClient.AnalyzeImageInStreamAsync(photo, new List<VisualFeatureTypes> { VisualFeatureTypes.Adult, VisualFeatureTypes.Tags }).ConfigureAwait(false);
             }
             catch (HttpRequestException e) when (e.InnerException is WebException webException
                                                     && (webException.Status is WebExceptionStatus.NameResolutionFailure || webException.Status is WebExceptionStatus.ConnectFailure))
@@ -59,7 +59,10 @@ namespace PerfectGift
             var doesContainAdultContent = imageAnalysisResult?.Adult?.IsAdultContent ?? false;
             var doesContainRacyContent = imageAnalysisResult?.Adult?.IsRacyContent ?? false;
 
-            bool doesImageContainAllPhotoTags = (imageAnalysisResult?.Description?.Tags?.Intersect(requiredPhotoTags)?.ToList()?.Count ?? 0) == requiredPhotoTags.Count;
+            var imageTags = imageAnalysisResult?.Tags?.Select(x => x.Name) ?? Enumerable.Empty<string>();
+            var matchingTagsCount = imageTags.Intersect(requiredPhotoTags.Distinct()).Count();
+
+            bool doesImageContainAllPhotoTags = matchingTagsCount == requiredPhotoTags.Count;
 
             if (isInvalidAPIKey
                 || (doesContainRacyContent && !shouldAllowRacyContent)

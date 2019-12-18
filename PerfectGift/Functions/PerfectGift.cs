@@ -27,13 +27,14 @@ namespace PerfectGift
         {
             _logger.LogInformation("Blob Storage Function Tiggered");
 
-            _logger.LogInformation("Creating Stream");
+            _logger.LogInformation("Opening Image Stream");
+            using var giftPhotoStream = await giftPhotoBlob.OpenReadAsync().ConfigureAwait(false);
 
+            var isPhotoValid = await _computerVisionService.IsPhotoValid(giftPhotoStream, _requiredPhotoTags).ConfigureAwait(false);
 
             if (isPhotoValid)
             {
                 _logger.LogInformation("Perfect Gift Confirmed");
-            using var giftPhotoStream = await giftPhotoBlob.OpenReadAsync().ConfigureAwait(false);
             }
             else
             {
