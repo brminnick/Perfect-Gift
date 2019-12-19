@@ -251,3 +251,5 @@ az storage blob list --container-name gifts --connection-string "[YOUR CONNECTIO
 > e.g. `az storage blob list --container-name gifts --connection-string "abc123def456ghi789=="`
 
 10. In the JSON response, confirm that **"name": "Gift2"** does **not** exist
+
+> **Note:** It may take a minute for the Blob Trigger Function to analyze the uploaded image. If **"name": "Gift2"** does still exist, run `az storage blob list --container-name gifts --connection-string "[YOUR CONNECTION STRING]"` again in a few minutes 
