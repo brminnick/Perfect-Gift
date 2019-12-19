@@ -132,7 +132,26 @@ az storage account create --name giftstorage[YOUR NAME] --location EastUS --reso
 
 > **Note:** Replace `[Your Name]` with your name to ensure the storage account name is unique, e.g. `giftstoragebrandon`
 
-7. In the terminal, enter the following command to create an Azure Function App:
+7. In the terminal, enter the following command retrive the Azure Storage Connection String
+
+```bash
+az storage account show-connection-string --name giftstorage[YOUR NAME]
+```
+
+> **Note:** Replace `[Your Name]` with your name
+
+8. In the terminal, in the JSON repsonse, copy the value of **connectionString**
+> **Note:** We will use **connectionString** in the next step to create a new storage container
+
+9. In the terminal, enter the following command to create container called `gifts` in our Azure Storage account:
+
+```bash
+az storage container create --name gifts --connection-string "[YOUR CONNECTION STRING]"
+```
+
+> **Note:** Replace `[YOUR CONNECTION STRING]` with the vaulue of **connectionString** retreived in the previous step, e.g. az `storage container create --name gifts --connection-string "abc123def456ghi789=="`
+
+10. In the terminal, enter the following command to create an Azure Function App:
 
 ```bash
 az functionapp create --resource-group PerfectGift --consumption-plan-location EastUS --name PerfectGift-[Your Name] --storage-account  giftstorage[YOUR NAME] --runtime dotnet
@@ -140,16 +159,95 @@ az functionapp create --resource-group PerfectGift --consumption-plan-location E
 
 > **Note:** Replace `[Your Name]` with your name to ensure the function app name is unique, e.g. `PerfectGift-Brandon`
 
-8. In the terminal, enter the following to set the Azure Functions Runtime to v3:
+11. In the terminal, enter the following to set the Azure Functions Runtime to v3:
 
 ```bash
 az functionapp config appsettings set --resource-group PerfectGift --name PerfectGift-Brandon --settings "FUNCTIONS_EXTENSION_VERSION=~3"
 ```
 
-9. In the terminal, enter the following to add the Computer Vision API **key** and **endpoint** to the newly created Azure Function App:
+12. In the terminal, enter the following to add the Computer Vision API **key** and **endpoint** to the newly created Azure Function App:
 
 ```bash
 az functionapp config appsettings set --resource-group PerfectGift --name PerfectGift-[YOUR NAME] --settings "VisionApiKey=[YOUR API KEY]" "VisionApiBaseUrl=[YOUR COMPUTER VISION ENDPOINT]"
 ```
 > **Note:** Replace `[YOUR NAME]` with your name, replace `[YOUR API KEY]` with the value of **key1** and replace `[YOUR COMPUTER VISION ENDPOINT]` with the value of **endpoint**
 > e.g. `az functionapp config appsettings set --resource-group PerfectGift --name PerfectGift-Brandon --settings "VisionApiKey=abc123" "VisionApiBaseUrl=https://eastus.api.cognitive.microsoft.com"`
+
+### Step 4: Publish Azure Function
+
+In this step, we will publish the solution found in `PerfectGift.csproj` to Azure.
+
+1. In the terminal, enter the following command to navigate to the folder containing `PerfectGift.csproj` in the cloned solution repo
+- (Windows)
+
+```bash
+cd [Path to cloned solution repo, ]\Perfect-Gift\PerfectGift\
+```
+
+- (macOS)
+
+```bash
+cd [Path to cloned solution repo/Perect-Gift/PerfectGift
+```
+
+2. In the terminal, enter the following command to publish `PerfectGift.csproj` to our Azure Function App:
+
+```bash
+func azure functionapp publish PerfectGift-[YOUR NAME]
+```
+
+> **Note:** Replace `[YOUR NAME]` with your name
+
+### Step 5: Upload Perfectly Wrapped Gift Images
+
+Our serverless functon is now ready to verify our gift images!
+
+In this step, we will upload images to Azure Blob Storage and confirm that our serverless function automatically verifies the image is a perfectly wrapped gift. If the image is not of a perfectly wrapped gift, it will automatically be removed from Azure Blob Storage.
+
+1. Download this sample image of a [perfectly wrapped gift](https://user-images.githubusercontent.com/13558917/70572373-88876980-1b54-11ea-8cd5-af07306b6d19.jpg)
+
+2. Move & rename the downloaded image of a perfectly wrapped gift:
+- (Windows) Save the file as C:\Downloads\gift.jpg
+- (macOS) Save the file as ~/Download/gift.jpg
+
+3. In the terminal, enter the following command to upload our image of a perfectly wrapped gift
+
+```bash
+az storage blob upload --container-name gifts --connection-string "[YOUR CONNECTION STRING]" --file [FILE PATH TO GIFT IMAGE] --name Gift1
+```
+> **Note:** Replace `[YOUR CONNECTION STRING]` with the value of **connectionString** and replace `[FILE PATH TO GIFT IMAGE]` with the file path to your wrapped gift image
+> e.g. `az storage blob upload --container-name gifts --connection-string "abc123def456ghi789==" --file cd:\Downloads\gift.jpg --name Gift1`
+
+4. In the terminal, enter the following command to confirm the image has been **not** been deleted from storage:
+
+```bash
+az storage blob show --container-name gifts --connection-string "[YOUR CONNECTION STRING]"
+```
+> **Note:** Replace `[YOUR CONNECTION STRING]` with the value of **connectionString** and replace `[FILE PATH TO GIFT IMAGE]` with the file path to your wrapped gift image
+> e.g. `az storage blob show --container-name gifts --connection-string "abc123def456ghi789=="`
+
+5. In the JSON repsone, confirm **"name": "Gift1"**
+
+6. Download this sample image of a [wrapped gift missing a bow](https://user-images.githubusercontent.com/13558917/71133980-696e8480-21b1-11ea-942e-93508643f1e7.jpg)
+
+7. Move & rename the downloaded image of a wrapped gift missing a bow:
+- (Windows) Save the file as C:\Downloads\nobow.jpg
+- (macOS) Save the file as ~/Download/nobow.jpg
+
+8. In the terminal, enter the following command to upload our image of a perfectly wrapped gift
+
+```bash
+az storage blob upload --container-name gifts --connection-string "[YOUR CONNECTION STRING]" --file [FILE PATH TO NO BOW GIFT IMAGE] --name Gift2
+```
+> **Note:** Replace `[YOUR CONNECTION STRING]` with the value of **connectionString** and replace `[FILE PATH TO GIFT IMAGE]` with the file path to your wrapped gift image
+> e.g. `az storage blob upload --container-name gifts --connection-string "abc123def456ghi789==" --file cd:\Downloads\nobow.jpg --name Gift2`
+
+9. In the terminal, enter the following command to confirm the image has been **not** been deleted from storage:
+
+```bash
+az storage blob show --container-name gifts --connection-string "[YOUR CONNECTION STRING]"
+```
+> **Note:** Replace `[YOUR CONNECTION STRING]` with the value of **connectionString** and replace `[FILE PATH TO GIFT IMAGE]` with the file path to your wrapped gift image
+> e.g. `az storage blob show --container-name gifts --connection-string "abc123def456ghi789=="`
+
+10. In the JSON response, confirm that **"name": "Gift2"** does **not** exist
