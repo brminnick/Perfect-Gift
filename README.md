@@ -221,10 +221,10 @@ az storage blob upload --container-name gifts --connection-string "[YOUR CONNECT
 4. In the terminal, enter the following command to confirm the image has been **not** been deleted from storage:
 
 ```bash
-az storage blob show --container-name gifts --connection-string "[YOUR CONNECTION STRING]"
+az storage blob list --container-name gifts --connection-string "[YOUR CONNECTION STRING]"
 ```
 > **Note:** Replace `[YOUR CONNECTION STRING]` with the value of **connectionString** and replace `[FILE PATH TO GIFT IMAGE]` with the file path to your wrapped gift image
-> e.g. `az storage blob show --container-name gifts --connection-string "abc123def456ghi789=="`
+> e.g. `az storage blob list --container-name gifts --connection-string "abc123def456ghi789=="`
 
 5. In the JSON repsone, confirm **"name": "Gift1"**
 
@@ -237,7 +237,7 @@ az storage blob show --container-name gifts --connection-string "[YOUR CONNECTIO
 8. In the terminal, enter the following command to upload our image of a perfectly wrapped gift
 
 ```bash
-az storage blob upload --container-name gifts --connection-string "[YOUR CONNECTION STRING]" --file [FILE PATH TO NO BOW GIFT IMAGE] --name Gift2
+az storage blob list --container-name gifts --connection-string "[YOUR CONNECTION STRING]" --file [FILE PATH TO NO BOW GIFT IMAGE] --name Gift2
 ```
 > **Note:** Replace `[YOUR CONNECTION STRING]` with the value of **connectionString** and replace `[FILE PATH TO GIFT IMAGE]` with the file path to your wrapped gift image
 > e.g. `az storage blob upload --container-name gifts --connection-string "abc123def456ghi789==" --file cd:\Downloads\nobow.jpg --name Gift2`
@@ -245,9 +245,9 @@ az storage blob upload --container-name gifts --connection-string "[YOUR CONNECT
 9. In the terminal, enter the following command to confirm the image has been **not** been deleted from storage:
 
 ```bash
-az storage blob show --container-name gifts --connection-string "[YOUR CONNECTION STRING]"
+az storage blob list --container-name gifts --connection-string "[YOUR CONNECTION STRING]"
 ```
 > **Note:** Replace `[YOUR CONNECTION STRING]` with the value of **connectionString** and replace `[FILE PATH TO GIFT IMAGE]` with the file path to your wrapped gift image
-> e.g. `az storage blob show --container-name gifts --connection-string "abc123def456ghi789=="`
+> e.g. `az storage blob list --container-name gifts --connection-string "abc123def456ghi789=="`
 
 10. In the JSON response, confirm that **"name": "Gift2"** does **not** exist
