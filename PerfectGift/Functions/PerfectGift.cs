@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -23,28 +24,42 @@ namespace PerfectGift
         }
 
         [FunctionName(nameof(PerfectGiftFunction))]
-        public async Task Run([BlobTrigger("gifts")]CloudBlockBlob giftPhotoBlob)
+        public async Task Run([BlobTrigger("gifts")]CloudBlockBlob giftPhotoBlob, ILogger logger)
         {
-            _logger.LogInformation("Blob Storage Function Tiggered");
+            logger.LogInformation("Blob Storage Function Tiggered");
 
-            _logger.LogInformation("Opening Image Stream");
-            using var giftPhotoStream = await giftPhotoBlob.OpenReadAsync().ConfigureAwait(false);
+            logger.LogInformation("Opening Image Stream");
 
-            var isPhotoValid = await _computerVisionService.IsPhotoValid(giftPhotoStream, _requiredPhotoTags).ConfigureAwait(false);
-
-            if (isPhotoValid)
+            try
             {
-                _logger.LogInformation("Perfect Gift Confirmed");
+                using var giftPhotoStream = await giftPhotoBlob.OpenReadAsync().ConfigureAwait(false);
+
+                var isPhotoValid = await _computerVisionService.IsPhotoValid(giftPhotoStream, _requiredPhotoTags).ConfigureAwait(false);
+
+                if (isPhotoValid)
+                {
+                    logger.LogInformation("Perfect Gift Confirmed");
+                }
+                else
+                {
+                    logger.LogInformation($"Photo {giftPhotoBlob.Name} is not a perfect gift");
+
+                    logger.LogInformation($"Deleting {giftPhotoBlob.Name} from container");
+
+                    await giftPhotoBlob.DeleteAsync().ConfigureAwait(false);
+
+                    logger.LogInformation($"Deleted {giftPhotoBlob.Name}");
+                }
             }
-            else
+            catch(Exception e)
             {
-                _logger.LogInformation($"Photo {giftPhotoBlob.Name} is not a perfect gift");
+                logger.LogInformation(e.ToString());
 
-                _logger.LogInformation($"Deleting {giftPhotoBlob.Name} from container");
+                logger.LogInformation($"Deleting {giftPhotoBlob.Name} from container");
 
                 await giftPhotoBlob.DeleteAsync().ConfigureAwait(false);
 
-                _logger.LogInformation($"Deleted {giftPhotoBlob.Name}");
+                logger.LogInformation($"Deleted {giftPhotoBlob.Name}");
             }
         }
 
