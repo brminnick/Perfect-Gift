@@ -7,7 +7,7 @@ The challenge on [Day 18](https://25daysofserverless.com/calendar/18) of [#25Day
 2. Box is wrapped
 3. A bow / ribbon placed on top
 
-Let's accomplish this using [Azure Blob Storage](https://azure.microsoft.com/services/storage/blobs?WT.mc_id=perfectgift-github-bramin), [Azure Computer Vision API](https://azure.microsoft.com/services/cognitive-services/computer-vision?WT.mc_id=perfectgift-github-bramin), and [Azure Functions](https://docs.microsoft.com/azure/azure-functions/?WT.mc_id=perfectgift-github-bramin).
+Let's accomplish this using [Azure Blob Storage](https://azure.microsoft.com/services/storage/blobs?WT.mc_id=25daysofserverless-github-bramin), [Azure Computer Vision API](https://azure.microsoft.com/services/cognitive-services/computer-vision?WT.mc_id=25daysofserverless-github-bramin), and [Azure Functions](https://docs.microsoft.com/azure/azure-functions/?WT.mc_id=25daysofserverless-github-bramin).
 
 ## Example
 
@@ -18,7 +18,7 @@ Using this [example of a perfectly wrapped gift](https://user-images.githubuserc
 - Ribbon
 - Present
 
-[![Computer Vision Results Example](https://user-images.githubusercontent.com/13558917/70573740-71964680-1b57-11ea-9126-e71f2de14a45.png)](https://azure.microsoft.com/services/cognitive-services/computer-vision?WT.mc_id=perfectgift-github-bramin)
+[![Computer Vision Results Example](https://user-images.githubusercontent.com/13558917/70573740-71964680-1b57-11ea-9126-e71f2de14a45.png)](https://azure.microsoft.com/services/cognitive-services/computer-vision?WT.mc_id=25daysofserverless-github-bramin)
 
 ## Creating the Solution
 
@@ -28,10 +28,10 @@ In this step, we will install the necessary commandline tools in order to comple
 
 1 - Install .NET Core v3.1
 
-- In a browser, navigate to the [Download .NET Core Website](https://dotnet.microsoft.com/download/dotnet-core/3.1?WT.mc_id=perfectgift-github-bramin)
+- In a browser, navigate to the [Download .NET Core Website](https://dotnet.microsoft.com/download/dotnet-core/3.1?WT.mc_id=25daysofserverless-github-bramin)
 - On the **Download .NET Core Website**, install .NET Core 3.1
 
-2 - Install the [Azure CLI](https://docs.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest&WT.mc_id=perfectgift-github-bramin)
+2 - Install the [Azure CLI](https://docs.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest&WT.mc_id=25daysofserverless-github-bramin)
 
   - (Windows) [Download the MSI Installer](https://aka.ms/installazurecliwindows)
 
@@ -41,7 +41,7 @@ In this step, we will install the necessary commandline tools in order to comple
 brew update && brew install azure-cli
 ```
 
- 3 - Install [Azure Functions Core Tools v3.x](https://docs.microsoft.com/azure/azure-functions/functions-run-local?WT.mc_id=perfectgift-github-bramin#v3)
+ 3 - Install [Azure Functions Core Tools v3.x](https://docs.microsoft.com/azure/azure-functions/functions-run-local?WT.mc_id=25daysofserverless-github-bramin#v3)
 
   - (Windows) In the terminal, enter the following command:
 
@@ -105,11 +105,11 @@ In this step, we'll generate the following Azure Resources:
 
 - Azure Resource Group
   - This is a folder in azure that will hold our resources
-- [Azure Blob Storage](https://azure.microsoft.com/services/storage/blobs?WT.mc_id=perfectgift-github-bramin)
+- [Azure Blob Storage](https://azure.microsoft.com/services/storage/blobs?WT.mc_id=25daysofserverless-github-bramin)
   - This is where we'll upload and store the images of our gifts
-- [Computer Vision API](https://azure.microsoft.com/services/cognitive-services/computer-vision?WT.mc_id=perfectgift-github-bramin) Key
+- [Computer Vision API](https://azure.microsoft.com/services/cognitive-services/computer-vision?WT.mc_id=25daysofserverless-github-bramin) Key
   - This API will use machine learning to confirm that our gift has been perfectly wrapped
-- [Azure Functions](https://docs.microsoft.com/azure/azure-functions/?WT.mc_id=perfectgift-github-bramin)
+- [Azure Functions](https://docs.microsoft.com/azure/azure-functions/?WT.mc_id=25daysofserverless-github-bramin)
   - This server less function will run each time a new photo is uploaded to Azure Blob Storage to confirm that the image contains a perfectly wrapped gift
 
 1 - In the terminal, enter the following command to create an Azure Resource Group
@@ -126,7 +126,7 @@ az cognitiveservices account create --resource-group PerfectGift --name PerfectG
 
 3 - In the terminal, in the JSON response, note the value of **endpoint**
 
-> **Note:** For the EastUS, the endpoint should be `https://eastus.api.cognitive.microsoft.com/?WT.mc_id=perfectgift-github-bramin`. We will use this value later in our serverless function.
+> **Note:** For the EastUS, the endpoint should be `https://eastus.api.cognitive.microsoft.com`. We will use this value later in our serverless function.
 
 4 - In the terminal, enter the following command to retrieve the newly generated Computer Vision API Key
 
@@ -192,7 +192,7 @@ az functionapp config appsettings set --resource-group PerfectGift --name Perfec
 ```
 
 > **Note:** Replace `[YOUR NAME]` with your name, replace `[YOUR API KEY]` with the value of **key1** and replace `[YOUR COMPUTER VISION ENDPOINT]` with the value of **endpoint**
-> e.g. `az functionapp config appsettings set --resource-group PerfectGift --name PerfectGift-Brandon --settings "VisionApiKey=abc123" "VisionApiBaseUrl=https://eastus.api.cognitive.microsoft.com/?WT.mc_id=perfectgift-github-bramin"`
+> e.g. `az functionapp config appsettings set --resource-group PerfectGift --name PerfectGift-Brandon --settings "VisionApiKey=abc123" "VisionApiBaseUrl=https://eastus.api.cognitive.microsoft.com"`
 
 ### Step 4: Publish Azure Function
 
