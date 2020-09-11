@@ -77,9 +77,7 @@ namespace PerfectGift
             return true;
         }
 
-        void OnDisplayInvalidPhotoAlert(bool doesContainAdultContent, bool doesContainRacyContent, bool doesImageContainAcceptablePhotoTags, bool invalidAPIKey, bool internetConnectionFailed)
-        {
-            _invalidPhotoSubmittedEventManager.HandleEvent(this, new InvalidPhotoEventArgs(doesContainAdultContent, doesContainRacyContent, doesImageContainAcceptablePhotoTags, invalidAPIKey, internetConnectionFailed), nameof(InvalidPhotoSubmitted));
-        }
+        void OnDisplayInvalidPhotoAlert(bool doesContainAdultContent, bool doesContainRacyContent, bool doesImageContainAcceptablePhotoTags, bool invalidAPIKey, bool internetConnectionFailed) =>
+            _invalidPhotoSubmittedEventManager.RaiseEvent(this, new InvalidPhotoEventArgs(doesContainAdultContent, doesContainRacyContent, doesImageContainAcceptablePhotoTags, invalidAPIKey, internetConnectionFailed), nameof(InvalidPhotoSubmitted));
     }
 }
