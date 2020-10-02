@@ -126,7 +126,7 @@ az cognitiveservices account create --resource-group PerfectGift --name PerfectG
 
 3 - In the terminal, in the JSON response, note the value of **endpoint**
 
-> **Note:** For the EastUS, the endpoint should be `https://eastus.api.cognitive.microsoft.com`. We will use this value later in our serverless function.
+> **Note:** For the EastUS, the endpoint should be `https://eastus.api.cognitive.microsoft.com/?WT.mc_id=perfectgift-github-bramin`. We will use this value later in our serverless function.
 
 4 - In the terminal, enter the following command to retrieve the newly generated Computer Vision API Key
 
@@ -192,7 +192,7 @@ az functionapp config appsettings set --resource-group PerfectGift --name Perfec
 ```
 
 > **Note:** Replace `[YOUR NAME]` with your name, replace `[YOUR API KEY]` with the value of **key1** and replace `[YOUR COMPUTER VISION ENDPOINT]` with the value of **endpoint**
-> e.g. `az functionapp config appsettings set --resource-group PerfectGift --name PerfectGift-Brandon --settings "VisionApiKey=abc123" "VisionApiBaseUrl=https://eastus.api.cognitive.microsoft.com"`
+> e.g. `az functionapp config appsettings set --resource-group PerfectGift --name PerfectGift-Brandon --settings "VisionApiKey=abc123" "VisionApiBaseUrl=https://eastus.api.cognitive.microsoft.com/?WT.mc_id=perfectgift-github-bramin"`
 
 ### Step 4: Publish Azure Function
 
