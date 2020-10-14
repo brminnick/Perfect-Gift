@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
@@ -10,7 +9,7 @@ namespace PerfectGift
 {
     public class PerfectGiftFunction
     {
-        static readonly IReadOnlyCollection<string> _requiredPhotoTags = new List<string> { "box", "gift wrapping", "ribbon", "present" };
+        static readonly IReadOnlyList<string> _requiredPhotoTags = new[] { "box", "gift wrapping", "ribbon", "present" };
 
         readonly ILogger _logger;
         readonly ComputerVisionService _computerVisionService;
@@ -24,7 +23,7 @@ namespace PerfectGift
         }
 
         [FunctionName(nameof(PerfectGiftFunction))]
-        public async Task Run([BlobTrigger("gifts")]CloudBlockBlob giftPhotoBlob, ILogger logger)
+        public async Task Run([BlobTrigger("gifts")] CloudBlockBlob giftPhotoBlob, ILogger logger)
         {
             logger.LogInformation("Blob Storage Function Tiggered");
 
@@ -51,7 +50,7 @@ namespace PerfectGift
                     logger.LogInformation($"Deleted {giftPhotoBlob.Name}");
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 logger.LogInformation(e.ToString());
 

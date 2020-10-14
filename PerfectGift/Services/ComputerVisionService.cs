@@ -15,6 +15,7 @@ namespace PerfectGift
     public class ComputerVisionService
     {
         readonly WeakEventManager<InvalidPhotoEventArgs> _invalidPhotoSubmittedEventManager = new WeakEventManager<InvalidPhotoEventArgs>();
+
         readonly ILogger _logger;
         readonly ComputerVisionClient _computerVisionApiClient;
 
@@ -27,7 +28,7 @@ namespace PerfectGift
             remove => _invalidPhotoSubmittedEventManager.RemoveEventHandler(value);
         }
 
-        public async Task<bool> IsPhotoValid(Stream photo, IReadOnlyCollection<string> requiredPhotoTags, bool shouldAllowAdultContent = false, bool shouldAllowRacyContent = false)
+        public async Task<bool> IsPhotoValid(Stream photo, IReadOnlyList<string> requiredPhotoTags, bool shouldAllowAdultContent = false, bool shouldAllowRacyContent = false)
         {
             bool isInvalidAPIKey = false;
             bool hasInternetConnectionFailed = false;
@@ -38,7 +39,7 @@ namespace PerfectGift
 
             try
             {
-                imageAnalysisResult = await _computerVisionApiClient.AnalyzeImageInStreamAsync(photo, new List<VisualFeatureTypes> { VisualFeatureTypes.Adult, VisualFeatureTypes.Tags }).ConfigureAwait(false);
+                imageAnalysisResult = await _computerVisionApiClient.AnalyzeImageInStreamAsync(photo, new List<VisualFeatureTypes?> { VisualFeatureTypes.Adult, VisualFeatureTypes.Tags }).ConfigureAwait(false);
             }
             catch (HttpRequestException e) when (e.InnerException is WebException webException
                                                     && (webException.Status is WebExceptionStatus.NameResolutionFailure || webException.Status is WebExceptionStatus.ConnectFailure))
@@ -70,14 +71,14 @@ namespace PerfectGift
                 || !doesImageContainAllPhotoTags
                 || hasInternetConnectionFailed)
             {
-                OnDisplayInvalidPhotoAlert(doesContainAdultContent, doesContainRacyContent, doesImageContainAllPhotoTags, isInvalidAPIKey, hasInternetConnectionFailed);
+                OnInvalidPhotoSubmitted(doesContainAdultContent, doesContainRacyContent, doesImageContainAllPhotoTags, isInvalidAPIKey, hasInternetConnectionFailed);
                 return false;
             }
 
             return true;
         }
 
-        void OnDisplayInvalidPhotoAlert(bool doesContainAdultContent, bool doesContainRacyContent, bool doesImageContainAcceptablePhotoTags, bool invalidAPIKey, bool internetConnectionFailed) =>
+        void OnInvalidPhotoSubmitted(bool doesContainAdultContent, bool doesContainRacyContent, bool doesImageContainAcceptablePhotoTags, bool invalidAPIKey, bool internetConnectionFailed) =>
             _invalidPhotoSubmittedEventManager.RaiseEvent(this, new InvalidPhotoEventArgs(doesContainAdultContent, doesContainRacyContent, doesImageContainAcceptablePhotoTags, invalidAPIKey, internetConnectionFailed), nameof(InvalidPhotoSubmitted));
     }
 }
